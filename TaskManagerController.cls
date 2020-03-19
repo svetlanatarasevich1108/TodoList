@@ -1,40 +1,41 @@
 public with sharing class TaskManagerController {
-
+    public static final String COMPLETED_STATUS = 'Completed';
     @AuraEnabled(Cacheable=true)
-    public static Map<String, List<Task__c>> getAllTask() {
-        List<Task__c> listTasks = [SELECT Id, Date__c, Task_Name__c,Checkbox__c FROM Task__c ORDER BY Date__c];
-        Map<String, List<Task__c>> mapData = new Map<String, List<Task__c>> ();
-        for (Task__c item : listTasks) {
-            List<Task__c> newList = new List<Task__c>();
-            String key = String.valueOf(item.Date__c);
-            if (!mapData.keySet().contains(key)) {
-                newList.add(item);
-                mapData.put(key, newList);
+    public static Map<String, List<Task__c>> getMapAllTasksFromDatabase() {
+        Map<String, List<Task__c>> mapAllTasksValue = new Map<String, List<Task__c>> ();
+        List<Task__c> listAllTasksFromDatabase = [
+                SELECT
+                        Id,
+                        Date__c,
+                        Task_Name__c,
+                        Checkbox__c
+                FROM Task__c
+                ORDER BY Date__c
+        ];
+        for (Task__c item : listAllTasksFromDatabase) {
+            List<Task__c> listAllTasksForMapValue = new List<Task__c>();
+            String keyForMapAllTasks = String.valueOf(item.Date__c);
+            if (!mapAllTasksValue.keySet().contains(keyForMapAllTasks)) {
+                listAllTasksForMapValue.add(item);
+                mapAllTasksValue.put(keyForMapAllTasks, listAllTasksForMapValue);
             } else {
-                mapData.get(key).add(item);
+                mapAllTasksValue.get(keyForMapAllTasks).add(item);
             }
         }
-        return mapData;
+        return mapAllTasksValue;
     }
-
     @AuraEnabled
-    public static Map<String, List<Task__c>> getChangeCheckbox(String recordId) {
-        List<Task__c> lTasks = [SELECT Id, Task_Name__c, Date__c,Checkbox__c FROM Task__c WHERE Id = :recordId];
-        lTasks[0].Status__c = 'Completed';
-        lTasks[0].Checkbox__c = true;
-        update lTasks;
-        List<Task__c> listTasks = [SELECT Id, Date__c, Task_Name__c,Checkbox__c FROM Task__c ORDER BY Date__c];
-        Map<String, List<Task__c>> mapData = new Map<String, List<Task__c>> ();
-        for (Task__c item : listTasks) {
-            List<Task__c> newList = new List<Task__c>();
-            String key = String.valueOf(item.Date__c);
-            if (!mapData.keySet().contains(key)) {
-                newList.add(item);
-                mapData.put(key, newList);
-            } else {
-                mapData.get(key).add(item);
-            }
-        }
-        return mapData;
+    public static Map<String, List<Task__c>> updateTasksInDatabaseByRecordId(String recordId) {
+        List<Task__c> listTasksForUpdate = [
+                SELECT
+                        Status__c,
+                        Checkbox__c
+                FROM Task__c
+                WHERE Id = :recordId
+        ];
+        listTasksForUpdate[0].Status__c = COMPLETED_STATUS;
+        listTasksForUpdate[0].Checkbox__c = true;
+        update listTasksForUpdate;
+        return getMapAllTasksFromDatabase();
     }
 }
