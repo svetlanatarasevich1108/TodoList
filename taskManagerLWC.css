@@ -1,0 +1,21 @@
+.grid {
+    display: grid;
+}
+
+.template {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-gap: 2vw;
+}
+
+.container {
+    display: grid;
+    border: 1px solid gray;
+    font-size: 2vw;
+    padding: .5em;
+}
+
+.textFormatTrue {
+    text-decoration: line-through;
+}

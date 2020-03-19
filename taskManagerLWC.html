@@ -1,0 +1,51 @@
+<template>
+    <div class="grid">
+        <div class="slds-p-around_medium"
+             id="modal-content-id-1">
+            <div class="slds-p-bottom_large slds-p-left_large"
+                 style="width:500px">
+                <div class="template">
+                    <template for:each={mapData}
+                              for:item="mapKey"
+                              for:index="index">
+                        <div class="container"
+                             key={mapKey.key}>
+                            <div class="slds-summary-detail__title"
+                                 style="margin-bottom: 5px;">
+                                <span class="slds-badge"
+                                      style="background: #3dcd58; color: white;">
+                                    {mapKey.key}
+                                </span>
+                                <div class="innerTemplate">
+                                    <template for:each={mapKey.value}
+                                              for:item="mapVal">
+                                        <div class="slds-grid header-action"
+                                             key={mapKey.key}>
+                                            <div class="slds-col">
+                                <span class="slds-float_left">
+                                  <lightning-input type=checkbox
+                                                   title={mapKey.key}
+                                                   icon-name="standard:unmatched"
+                                                   value={mapVal.Id}
+                                                   onchange={handleClick}
+                                                   checked={mapVal.Checkbox__c}>
+                                  </lightning-input>
+                                </span>
+                                            </div>
+                                            <div class="textFormatTrue slds-col " if:true={mapVal.Checkbox__c}>
+                                                <p key={mapVal.Id}>{mapVal.Task_Name__c}</p>
+                                            </div>
+                                            <div class="slds-col" if:false={mapVal.Checkbox__c}>
+                                                <p key={mapVal.Id}>{mapVal.Task_Name__c}</p>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
